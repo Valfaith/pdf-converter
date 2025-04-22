@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f5f5f5"/>
+  <rect x="100" y="100" width="1000" height="430" rx="15" fill="#fff" stroke="#e1e1e1" stroke-width="2"/>
+  
+  <!-- Logo -->
+  <g transform="translate(280, 180) scale(0.6)">
+    <path fill="#e74c3c" d="M0 44c0-8.8 7.2-16 16-16H480c8.8 0 16 7.2 16 16V64c0 8.8-7.2 16-16 16H16C7.2 80 0 72.8 0 64V44zm16 112h176v136H16c-8.8 0-16-7.2-16-16V172c0-8.8 7.2-16 16-16zm192 0H496v136H208V156zM16 468V320h176v148c0 8.8-7.2 16-16 16H24c-4.4 0-8-3.6-8-8zm192 0V320H496v140c0 4.4-3.6 8-8 8H208z"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="600" y="250" font-family="Arial, sans-serif" font-size="64" text-anchor="middle" fill="#2c3e50" font-weight="bold">PDF Converter</text>
+  <text x="600" y="320" font-family="Arial, sans-serif" font-size="32" text-anchor="middle" fill="#7f8c8d">Konverter PDF ke Word &amp; Gambar</text>
+  
+  <!-- Feature Icons -->
+  <g transform="translate(300, 380)">
+    <circle cx="0" cy="0" r="40" fill="#3498db" />
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="32" text-anchor="middle" fill="white" dominant-baseline="middle">PDF</text>
+  </g>
+  
+  <g transform="translate(450, 380)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="32" text-anchor="middle" fill="#2c3e50" dominant-baseline="middle">→</text>
+  </g>
+  
+  <g transform="translate(600, 380)">
+    <circle cx="0" cy="0" r="40" fill="#2ecc71" />
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="32" text-anchor="middle" fill="white" dominant-baseline="middle">DOC</text>
+  </g>
+  
+  <g transform="translate(750, 380)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="32" text-anchor="middle" fill="#2c3e50" dominant-baseline="middle">→</text>
+  </g>
+  
+  <g transform="translate(900, 380)">
+    <circle cx="0" cy="0" r="40" fill="#9b59b6" />
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="32" text-anchor="middle" fill="white" dominant-baseline="middle">IMG</text>
+  </g>
+  
+  <!-- Footer -->
+  <text x="600" y="480" font-family="Arial, sans-serif" font-size="24" text-anchor="middle" fill="#7f8c8d">Konversi langsung di browser tanpa upload ke server</text>
+</svg> 

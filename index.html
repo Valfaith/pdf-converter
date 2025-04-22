@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Konverter PDF gratis berbasis browser. Konversi PDF ke Word dan gambar dengan mudah tanpa mengunggah file ke server.">
+    <meta name="keywords" content="konverter pdf, pdf ke word, pdf ke gambar, konversi pdf online, pdf converter, pdf to docx, pdf to image">
+    <meta name="author" content="PDF Converter">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <meta name="google" content="notranslate">
+    <meta name="theme-color" content="#3498db">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="application-name" content="PDF Converter">
+    <meta name="apple-mobile-web-app-title" content="PDF Converter">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pdf-converter.pages.dev/">
+    <meta property="og:title" content="PDF Converter - Konversi PDF ke Word & Gambar">
+    <meta property="og:description" content="Konverter PDF gratis berbasis browser. Konversi PDF ke Word dan gambar dengan mudah tanpa mengunggah file ke server.">
+    <meta property="og:image" content="https://pdf-converter.pages.dev/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://pdf-converter.pages.dev/">
+    <meta property="twitter:title" content="PDF Converter - Konversi PDF ke Word & Gambar">
+    <meta property="twitter:description" content="Konverter PDF gratis berbasis browser. Konversi PDF ke Word dan gambar dengan mudah tanpa mengunggah file ke server.">
+    <meta property="twitter:image" content="https://pdf-converter.pages.dev/og-image.png">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PDF Converter",
+      "url": "https://pdf-converter.pages.dev/",
+      "description": "Konverter PDF gratis berbasis browser. Konversi PDF ke Word dan gambar dengan mudah tanpa mengunggah file ke server.",
+      "applicationCategory": "Productivity",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+    
+    <title>PDF Converter - Konverter PDF ke Word & Gambar</title>
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OTYgNTEyIj48cGF0aCBmaWxsPSIjZTc0YzNjIiBkPSJNMCA0NGMwLTguOCA3LjItMTYgMTYtMTZINDgwYzguOCAwIDE2IDcuMiAxNiAxNlY2NGMwIDguOC03LjIgMTYtMTYgMTZIMTZDNy4yIDgwIDAgNzIuOCAwIDY0VjQ0em0xNiAxMTJoMTc2djEzNkgxNmMtOC44IDAtMTYtNy4yLTE2LTE2VjE3MmMwLTguOCA3LjItMTYgMTYtMTZ6bTE5MiAwSDQ5NnYxMzZIMjA4VjE1NnpNMTYgNDY4VjMyMGgxNzZ2MTQ4YzAgOC44LTcuMiAxNi0xNiAxNkgyNGMtNC40IDAtOC0zLjYtOC04em0xOTIgMFYzMjBINDk2djE0MGMwIDQuNC0zLjYgOC04IDhIMjA4eiIvPjwvc3ZnPg==">
+    <link rel="canonical" href="https://pdf-converter.pages.dev/">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>PDF Converter</h1>
+        <p class="subtitle">Konverter PDF ke Word & Gambar</p>
+
+        <div class="upload-container">
+            <div class="drop-area" id="dropArea">
+                <p>Tarik & lepas file PDF di sini atau</p>
+                <input type="file" id="fileInput" accept=".pdf" />
+                <label for="fileInput" class="upload-btn">Pilih File</label>
+            </div>
+            <div class="file-info" id="fileInfo">
+                <p>Belum ada file yang dipilih.</p>
+            </div>
+        </div>
+
+        <div class="actions" id="actions" style="display: none;">
+            <button id="convertToWord" class="action-btn">Konversi ke Word</button>
+            <button id="convertToImage" class="action-btn">Konversi ke Gambar</button>
+        </div>
+
+        <div class="preview" id="preview">
+            <h2>Pratinjau</h2>
+            <div id="pdfPreview"></div>
+        </div>
+
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Sedang memproses...</p>
+        </div>
+
+        <footer>
+            <p>Aplikasi berbasis browser ini berjalan sepenuhnya di sisi klien. File Anda tidak pernah dikirim ke server.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html> 
