@@ -370,4 +370,3 @@ async function convertPdfToImages(pdfData, outputFilenameBase) {
         throw error;
     }
 } 
-} 
