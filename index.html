@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,52 +50,66 @@
     }
     </script>
     
-    <title>PDF Converter - Konverter PDF ke Word & Gambar</title>
+    <title>Konverter PDF</title>
     <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OTYgNTEyIj48cGF0aCBmaWxsPSIjZTc0YzNjIiBkPSJNMCA0NGMwLTguOCA3LjItMTYgMTYtMTZINDgwYzguOCAwIDE2IDcuMiAxNiAxNlY2NGMwIDguOC03LjIgMTYtMTYgMTZIMTZDNy4yIDgwIDAgNzIuOCAwIDY0VjQ0em0xNiAxMTJoMTc2djEzNkgxNmMtOC44IDAtMTYtNy4yLTE2LTE2VjE3MmMwLTguOCA3LjItMTYgMTYtMTZ6bTE5MiAwSDQ5NnYxMzZIMjA4VjE1NnpNMTYgNDY4VjMyMGgxNzZ2MTQ4YzAgOC44LTcuMiAxNi0xNiAxNkgyNGMtNC40IDAtOC0zLjYtOC04em0xOTIgMFYzMjBINDk2djE0MGMwIDQuNC0zLjYgOC04IDhIMjA4eiIvPjwvc3ZnPg==">
     <link rel="canonical" href="https://pdf-converter.pages.dev/">
     <link rel="stylesheet" href="styles.css">
+    <!-- Tambahkan Font Awesome untuk ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Tambahkan PDF.js -->
     <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-    
-    <!-- Mengganti cara import docx library -->
-    <script src="https://unpkg.com/docx@8.0.0/build/index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <!-- Tambahkan PDF.js worker -->
+    <script>
+        // Pastikan PDF.js workers tersedia
+        window.pdfjsLib = window.pdfjsLib || {};
+        window.pdfjsLib.GlobalWorkerOptions = window.pdfjsLib.GlobalWorkerOptions || {};
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+    </script>
+    <!-- Tambahkan docx.js -->
+    <script src="https://unpkg.com/docx@8.2.2/build/index.js"></script>
+    <!-- Tambahkan FileSaver.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>PDF Converter</h1>
-        <p class="subtitle">Konverter PDF ke Word & Gambar</p>
-
-        <div class="upload-container">
-            <div class="drop-area" id="dropArea">
-                <p>Tarik & lepas file PDF di sini atau</p>
-                <input type="file" id="fileInput" accept=".pdf" />
-                <label for="fileInput" class="upload-btn">Pilih File</label>
+        <header>
+            <h1><i class="fas fa-file-pdf"></i> Konverter PDF</h1>
+            <p>Unggah file PDF dan konversikan ke Word atau gambar dengan mudah</p>
+        </header>
+        
+        <main>
+            <div id="dropArea" class="drop-area">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Tarik dan lepas file PDF di sini</p>
+                <p>atau</p>
+                <label for="fileInput" class="file-button">Pilih File</label>
+                <input type="file" id="fileInput" accept=".pdf" hidden>
             </div>
-            <div class="file-info" id="fileInfo">
-                <p>Belum ada file yang dipilih.</p>
+            
+            <div id="fileInfo" class="file-info"></div>
+            
+            <div id="actions" class="actions" style="display: none;">
+                <button id="convertToWord" class="convert-button word">
+                    <i class="fas fa-file-word"></i> Konversi ke Word
+                </button>
+                <button id="convertToImage" class="convert-button image">
+                    <i class="fas fa-file-image"></i> Konversi ke Gambar
+                </button>
             </div>
-        </div>
-
-        <div class="actions" id="actions" style="display: none;">
-            <button id="convertToWord" class="action-btn">Konversi ke Word</button>
-            <button id="convertToImage" class="action-btn">Konversi ke Gambar</button>
-        </div>
-
-        <div class="preview" id="preview">
-            <h2>Pratinjau</h2>
-            <div id="pdfPreview"></div>
-        </div>
-
-        <div class="loader" id="loader">
-            <div class="spinner"></div>
-            <p>Sedang memproses...</p>
-        </div>
-
+            
+            <div id="pdfPreview" class="pdf-preview"></div>
+            
+            <div id="loader" class="loader" style="display: none;">
+                <div class="spinner"></div>
+                <p>Sedang diproses...</p>
+            </div>
+        </main>
+        
         <footer>
-            <p>Aplikasi berbasis browser ini berjalan sepenuhnya di sisi klien. File Anda tidak pernah dikirim ke server.</p>
+            <p>&copy; 2023 Konverter PDF. Semua hak dilindungi.</p>
         </footer>
     </div>
-
+    
     <script src="app.js"></script>
 </body>
 </html> 

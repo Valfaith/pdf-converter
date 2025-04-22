@@ -1,6 +1,3 @@
-// Memastikan PDF.js workers tersedia
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-
 // Elemen DOM
 const dropArea = document.getElementById('dropArea');
 const fileInput = document.getElementById('fileInput');
@@ -10,6 +7,9 @@ const pdfPreview = document.getElementById('pdfPreview');
 const convertToWordBtn = document.getElementById('convertToWord');
 const convertToImageBtn = document.getElementById('convertToImage');
 const loader = document.getElementById('loader');
+
+// Tambahkan log untuk debugging
+console.log('App initialized');
 
 // Variabel untuk menyimpan file PDF dan data
 let pdfFile = null;
@@ -104,8 +104,10 @@ function readPDF(file) {
         pdfData = new Uint8Array(e.target.result);
         
         try {
+            console.log("Loading PDF document...");
             const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
             pdfPages = pdf.numPages;
+            console.log(`PDF loaded with ${pdfPages} pages`);
             
             // Tampilkan preview untuk beberapa halaman pertama (maksimal 3)
             const previewPages = Math.min(pdfPages, 3);
@@ -168,7 +170,6 @@ convertToWordBtn.addEventListener('click', async function() {
         setTimeout(async () => {
             try {
                 await convertPdfToWord(pdfData, pdfFile.name.replace('.pdf', '.docx'));
-                hideLoader();
             } catch (error) {
                 console.error('Error in conversion:', error);
                 hideLoader();
@@ -196,7 +197,6 @@ convertToImageBtn.addEventListener('click', async function() {
         setTimeout(async () => {
             try {
                 await convertPdfToImages(pdfData, pdfFile.name.replace('.pdf', ''));
-                hideLoader();
             } catch (error) {
                 console.error('Error in conversion:', error);
                 hideLoader();
@@ -218,6 +218,19 @@ function showLoader() {
 // Menyembunyikan loader
 function hideLoader() {
     loader.style.display = 'none';
+}
+
+// Menghapus dialog unduhan jika ada
+function removeDownloadDialog() {
+    const existingDialog = document.getElementById('download-container');
+    if (existingDialog) {
+        document.body.removeChild(existingDialog);
+    }
+    
+    const existingMultipleDialog = document.getElementById('multiple-download-container');
+    if (existingMultipleDialog) {
+        document.body.removeChild(existingMultipleDialog);
+    }
 }
 
 // Fungsi untuk mengkonversi PDF ke Word
@@ -295,11 +308,82 @@ async function convertPdfToWord(pdfData, outputFilename) {
         
         // Menghasilkan file Word
         const buffer = await docx.Packer.toBuffer(doc);
-        saveAs(new Blob([buffer]), outputFilename);
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
         
-        alert('Konversi ke Word berhasil!');
+        // Coba otomatis download dulu
+        try {
+            saveAs(blob, outputFilename);
+            console.log('SaveAs berhasil dipanggil');
+        } catch (saveError) {
+            console.error('Error with saveAs:', saveError);
+        }
+        
+        // Buat link download manual sebagai fallback
+        const downloadContainer = document.createElement('div');
+        downloadContainer.id = 'download-container';
+        downloadContainer.style.position = 'fixed';
+        downloadContainer.style.top = '50%';
+        downloadContainer.style.left = '50%';
+        downloadContainer.style.transform = 'translate(-50%, -50%)';
+        downloadContainer.style.backgroundColor = 'white';
+        downloadContainer.style.padding = '20px';
+        downloadContainer.style.borderRadius = '8px';
+        downloadContainer.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
+        downloadContainer.style.zIndex = '9999';
+        
+        // Tambahkan tombol tutup
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'X';
+        closeButton.style.position = 'absolute';
+        closeButton.style.top = '10px';
+        closeButton.style.right = '10px';
+        closeButton.style.background = 'none';
+        closeButton.style.border = 'none';
+        closeButton.style.fontSize = '16px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.onclick = function() {
+            document.body.removeChild(downloadContainer);
+        };
+        
+        // Susun elemen
+        downloadContainer.appendChild(closeButton);
+        const headerElement = document.createElement('h3');
+        headerElement.textContent = 'Unduhan Siap';
+        headerElement.style.marginBottom = '10px';
+        headerElement.style.color = '#2c3e50';
+        
+        const infoElement = document.createElement('p');
+        infoElement.textContent = 'File Word telah berhasil dibuat.';
+        infoElement.style.marginBottom = '15px';
+        
+        downloadContainer.appendChild(headerElement);
+        downloadContainer.appendChild(infoElement);
+        
+        // Buat link download
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = outputFilename;
+        downloadLink.textContent = 'Klik disini untuk mengunduh file Word';
+        downloadLink.style.display = 'block';
+        downloadLink.style.margin = '20px auto';
+        downloadLink.style.textAlign = 'center';
+        downloadLink.style.padding = '10px';
+        downloadLink.style.backgroundColor = '#3498db';
+        downloadLink.style.color = 'white';
+        downloadLink.style.borderRadius = '5px';
+        downloadLink.style.textDecoration = 'none';
+        downloadLink.style.cursor = 'pointer';
+        
+        downloadContainer.appendChild(downloadLink);
+        
+        // Tambahkan container ke body
+        document.body.appendChild(downloadContainer);
+        
+        hideLoader();
     } catch (error) {
         console.error('Error converting to Word:', error);
+        hideLoader();
+        alert('Terjadi kesalahan saat konversi ke Word. Silakan coba lagi.');
         throw error;
     }
 }
@@ -314,6 +398,48 @@ async function convertPdfToImages(pdfData, outputFilenameBase) {
         // Proses setiap halaman
         if (numPages > 1) {
             const scale = 2.0; // Kualitas gambar (2x)
+            
+            // Buat container untuk semua link download
+            const multipleDownloadContainer = document.createElement('div');
+            multipleDownloadContainer.id = 'multiple-download-container';
+            multipleDownloadContainer.style.position = 'fixed';
+            multipleDownloadContainer.style.top = '50%';
+            multipleDownloadContainer.style.left = '50%';
+            multipleDownloadContainer.style.transform = 'translate(-50%, -50%)';
+            multipleDownloadContainer.style.backgroundColor = 'white';
+            multipleDownloadContainer.style.padding = '20px';
+            multipleDownloadContainer.style.maxHeight = '80vh';
+            multipleDownloadContainer.style.overflow = 'auto';
+            multipleDownloadContainer.style.borderRadius = '8px';
+            multipleDownloadContainer.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
+            multipleDownloadContainer.style.zIndex = '9999';
+            
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'X';
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '10px';
+            closeButton.style.right = '10px';
+            closeButton.style.background = 'none';
+            closeButton.style.border = 'none';
+            closeButton.style.fontSize = '16px';
+            closeButton.style.cursor = 'pointer';
+            closeButton.onclick = function() {
+                document.body.removeChild(multipleDownloadContainer);
+            };
+            
+            multipleDownloadContainer.appendChild(closeButton);
+            
+            const headerElement = document.createElement('h3');
+            headerElement.textContent = 'Unduhan Gambar Siap';
+            headerElement.style.marginBottom = '10px';
+            headerElement.style.color = '#2c3e50';
+            
+            const infoElement = document.createElement('p');
+            infoElement.textContent = `${numPages} gambar telah berhasil dibuat. Klik link di bawah untuk mengunduh:`;
+            infoElement.style.marginBottom = '15px';
+            
+            multipleDownloadContainer.appendChild(headerElement);
+            multipleDownloadContainer.appendChild(infoElement);
             
             for (let i = 1; i <= numPages; i++) {
                 const page = await pdf.getPage(i);
@@ -331,18 +457,48 @@ async function convertPdfToImages(pdfData, outputFilenameBase) {
                 
                 await page.render(renderContext).promise;
                 
-                // Konversi canvas ke PNG dan download
-                canvas.toBlob((blob) => {
-                    saveAs(blob, `${outputFilenameBase}_halaman_${i}.png`);
-                }, 'image/png');
+                // Buat link download untuk setiap halaman
+                await new Promise((resolve) => {
+                    canvas.toBlob((blob) => {
+                        const filename = `${outputFilenameBase}_halaman_${i}.png`;
+                        
+                        // Coba saveAs terlebih dahulu
+                        try {
+                            saveAs(blob, filename);
+                        } catch (saveError) {
+                            console.error(`Error with saveAs for page ${i}:`, saveError);
+                        }
+                        
+                        // Buat fallback link dalam container
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = URL.createObjectURL(blob);
+                        downloadLink.download = filename;
+                        downloadLink.textContent = `Unduh Halaman ${i}`;
+                        downloadLink.style.display = 'block';
+                        downloadLink.style.margin = '10px';
+                        downloadLink.style.padding = '8px 12px';
+                        downloadLink.style.backgroundColor = '#3498db';
+                        downloadLink.style.color = 'white';
+                        downloadLink.style.borderRadius = '4px';
+                        downloadLink.style.textDecoration = 'none';
+                        downloadLink.style.textAlign = 'center';
+                        downloadLink.style.cursor = 'pointer';
+                        
+                        multipleDownloadContainer.appendChild(downloadLink);
+                        resolve();
+                    }, 'image/png');
+                });
                 
                 // Jeda kecil antara setiap proses halaman
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
             
-            alert(`Konversi berhasil! ${numPages} gambar telah diunduh.`);
+            // Tambahkan container ke body setelah semua link siap
+            document.body.appendChild(multipleDownloadContainer);
+            hideLoader();
+            
         } else {
-            // Jika hanya 1 halaman, langsung konversi dan download
+            // Jika hanya 1 halaman
             const page = await pdf.getPage(1);
             const scale = 2.0;
             const viewport = page.getViewport({ scale });
@@ -359,14 +515,82 @@ async function convertPdfToImages(pdfData, outputFilenameBase) {
             
             await page.render(renderContext).promise;
             
-            // Konversi canvas ke PNG dan download
+            // Buat dialog download untuk satu halaman
+            const downloadContainer = document.createElement('div');
+            downloadContainer.id = 'download-container';
+            downloadContainer.style.position = 'fixed';
+            downloadContainer.style.top = '50%';
+            downloadContainer.style.left = '50%';
+            downloadContainer.style.transform = 'translate(-50%, -50%)';
+            downloadContainer.style.backgroundColor = 'white';
+            downloadContainer.style.padding = '20px';
+            downloadContainer.style.borderRadius = '8px';
+            downloadContainer.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)';
+            downloadContainer.style.zIndex = '9999';
+            
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'X';
+            closeButton.style.position = 'absolute';
+            closeButton.style.top = '10px';
+            closeButton.style.right = '10px';
+            closeButton.style.background = 'none';
+            closeButton.style.border = 'none';
+            closeButton.style.fontSize = '16px';
+            closeButton.style.cursor = 'pointer';
+            closeButton.onclick = function() {
+                document.body.removeChild(downloadContainer);
+            };
+            
+            downloadContainer.appendChild(closeButton);
+            
+            const headerElement = document.createElement('h3');
+            headerElement.textContent = 'Unduhan Siap';
+            headerElement.style.marginBottom = '10px';
+            headerElement.style.color = '#2c3e50';
+            
+            const infoElement = document.createElement('p');
+            infoElement.textContent = 'Gambar telah berhasil dibuat.';
+            infoElement.style.marginBottom = '15px';
+            
+            downloadContainer.appendChild(headerElement);
+            downloadContainer.appendChild(infoElement);
+            
+            // Konversi canvas ke PNG dan tambahkan link
             canvas.toBlob((blob) => {
-                saveAs(blob, `${outputFilenameBase}.png`);
-                alert('Konversi berhasil! Gambar telah diunduh.');
+                const filename = `${outputFilenameBase}.png`;
+                
+                // Coba saveAs terlebih dahulu
+                try {
+                    saveAs(blob, filename);
+                } catch (saveError) {
+                    console.error('Error with saveAs for image:', saveError);
+                }
+                
+                // Buat fallback download link
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = filename;
+                downloadLink.textContent = 'Klik disini untuk mengunduh gambar';
+                downloadLink.style.display = 'block';
+                downloadLink.style.margin = '20px auto';
+                downloadLink.style.textAlign = 'center';
+                downloadLink.style.padding = '10px';
+                downloadLink.style.backgroundColor = '#3498db';
+                downloadLink.style.color = 'white';
+                downloadLink.style.borderRadius = '5px';
+                downloadLink.style.textDecoration = 'none';
+                downloadLink.style.cursor = 'pointer';
+                
+                downloadContainer.appendChild(downloadLink);
+                document.body.appendChild(downloadContainer);
             }, 'image/png');
+            
+            hideLoader();
         }
     } catch (error) {
         console.error('Error converting to images:', error);
+        hideLoader();
+        alert('Terjadi kesalahan saat konversi ke gambar. Silakan coba lagi.');
         throw error;
     }
 } 
